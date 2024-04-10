@@ -33,7 +33,6 @@ jobs:
           echo 'Server = https://repo.msys2.org/mingw/$repo/' > /etc/pacman.d/mirrorlist.mingw
           echo 'Server = https://repo.msys2.org/msys/$arch/' > /etc/pacman.d/mirrorlist.msys
           pacman-conf.exe
-          printf "\n[artiq]\nSigLevel = Optional TrustAll\nServer = https://msys2.m-labs.hk/artiq-beta\n" >> /etc/pacman.conf
 
       - name: Update using the main mirror & Check install
         run: |
@@ -44,6 +43,8 @@ jobs:
       - name: Build Installer
         shell: msys2 {0}
         run: |
+          printf "\n[artiq]\nSigLevel = Optional TrustAll\nServer = https://msys2.m-labs.hk/artiq-beta\n" >> /etc/pacman.conf
+          pacman --noconfirm -Syy
           bash make-msys2-installer
 
       - name: Create 'latest' Variants and Checksums
@@ -69,7 +70,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [2019, 2022]
+        image: [2022]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -105,7 +106,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [2019, 2022]
+        image: [2022]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -138,7 +139,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [2019, 2022]
+        image: [2022]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
