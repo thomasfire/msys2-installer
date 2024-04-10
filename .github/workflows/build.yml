@@ -33,6 +33,7 @@ jobs:
           echo 'Server = https://repo.msys2.org/mingw/$repo/' > /etc/pacman.d/mirrorlist.mingw
           echo 'Server = https://repo.msys2.org/msys/$arch/' > /etc/pacman.d/mirrorlist.msys
           pacman-conf.exe
+          printf "\n[artiq]\nSigLevel = Optional TrustAll\nServer = https://msys2.m-labs.hk/artiq-beta\n" >> /etc/pacman.conf
 
       - name: Update using the main mirror & Check install
         run: |
