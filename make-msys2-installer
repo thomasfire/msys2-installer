@@ -98,7 +98,7 @@ main() {
   create_chroot_system
 
   copy_installer
-  #create_installer_archive
+  create_installer_archive
   create_installer
 }
 
