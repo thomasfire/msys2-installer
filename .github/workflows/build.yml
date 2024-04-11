@@ -5,7 +5,7 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 0 * * 0'
 
 concurrency: nope
 
@@ -98,21 +98,3 @@ jobs:
       - name: Uninstall
         run: |
           C:\msys2-install-test\uninstall.exe pr --confirm-command
-
-  upload-nightly:
-    permissions:
-      contents: write
-    needs:
-      - test-installer
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: installer
-
-      - name: Upload Installers
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload nightly-x86_64 msys2-* --clobber -R ${{ github.repository }}
