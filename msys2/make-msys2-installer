@@ -2,7 +2,9 @@
 
 set -e
 
-_thisdir="$( cd "$( dirname "$0" )" && pwd )"
+cd $(dirname $0)
+
+_thisdir=`pwd`
 _build="${_thisdir}/_build"
 _ifwroot="${_build}/qt-ifw"
 _date=$(date +'%Y%m%d')
@@ -17,7 +19,11 @@ BINCREATOR="${OLDROOT}/mingw64/bin/binarycreator.exe"
 INSTALLERBASE="${OLDROOT}/mingw64/bin/installerbase.exe"
 MINGW_PACKAGE_PREFIX="mingw-w64-x86_64"
 OLDCONFIG="--config ${OLDROOT}/etc/pacman.conf --cachedir ${OLDROOT}/msys/cache"
-NEWCONFIG="--config ${_newmsys}/etc/pacman.conf --cachedir ${OLDROOT}/msys/cache"
+
+echo $OLDROOT
+echo $_thisdir
+echo $OLDCONFIG
+
 
 create_installer_archive() {
   echo "[Creating installer archive...]"
@@ -68,8 +74,8 @@ create_installer() {
   popd > /dev/null
 }
 
-create_chroot_system() {
-  echo "[Creating chroot system...]"
+create_tmp_system() {
+  echo "[Creating temporary system...]"
   rm -Rf "${_newmsysbase}" && mkdir -p "${_newmsys}"
 
   pushd "${_newmsys}" > /dev/null
@@ -94,9 +100,9 @@ main() {
   curl -L https://raw.githubusercontent.com/msys2/MSYS2-packages/master/pacman/pacman.conf | sed -e "s|/etc/pacman.d|$OLDROOT/etc/pacman.d|g" -e "s|SigLevel    = Required|SigLevel    = Never|g" > $OLDROOT/etc/pacman.conf
 
   ${PACMAN} --root $OLDROOT --config $OLDROOT/etc/pacman.conf -Syy
-  ${PACMAN} --root $OLDROOT --config $OLDROOT/etc/pacman.conf --cachedir $OLDROOT/msys/cache -S mingw-w64-x86_64-qt-installer-framework --noconfirm --needed
+  ${PACMAN} --root $OLDROOT --config $OLDROOT/etc/pacman.conf --cachedir $OLDROOT/msys/cache -S ${MINGW_PACKAGE_PREFIX}-qt-installer-framework --noconfirm --needed
 
-  create_chroot_system
+  create_tmp_system
 
   copy_installer
   create_installer_archive

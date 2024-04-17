@@ -1,12 +1,10 @@
 {
-  description = "Additional packages for ARTIQ";
+  description = "ARTIQ offline installer development shell";
 
-  #inputs.artiqpkgs.url = git+https://github.com/m-labs/artiq.git;
   inputs.nixpkgs.url = github:NixOS/nixpkgs/nixos-23.11;
 
   outputs = { self, nixpkgs }:
     let
-      
     in rec {
       inherit nixpkgs;
 
