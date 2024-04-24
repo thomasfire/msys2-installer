@@ -20,11 +20,6 @@ INSTALLERBASE="${OLDROOT}/mingw64/bin/installerbase.exe"
 MINGW_PACKAGE_PREFIX="mingw-w64-x86_64"
 OLDCONFIG="--config ${OLDROOT}/etc/pacman.conf --cachedir ${OLDROOT}/msys/cache"
 
-echo $OLDROOT
-echo $_thisdir
-echo $OLDCONFIG
-
-
 create_installer_archive() {
   echo "[Creating installer archive...]"
 
@@ -33,23 +28,6 @@ create_installer_archive() {
     mkdir -p "${_data}"
     7z a -mx9 -md128m "${_data}/msys64.7z" "${_newmsys}/"*
   popd > /dev/null
-}
-
-create_archives() {
-  echo "[Creating tarball...]"
-  pushd "${_newmsysbase}" > /dev/null
-  /usr/bin/tar --transform='s/:/_/g' --dereference --hard-dereference -cf "${_thisdir}/msys2-base-x86_64-${_date}.tar" msys64
-  popd > /dev/null
-
-  echo "[Creating xz archive...]"
-  xz -9 --keep --verbose --force --compress --threads=0 "${_thisdir}/msys2-base-x86_64-${_date}.tar"
-  xz --test "${_thisdir}/msys2-base-x86_64-${_date}.tar.xz"
-
-  echo "[Creating zstd archive...]"
-  zstd -T0 -22 --ultra --force "${_thisdir}/msys2-base-x86_64-${_date}.tar" -o "${_thisdir}/msys2-base-x86_64-${_date}.tar.zst"
-  zstd --test "${_thisdir}/msys2-base-x86_64-${_date}.tar.zst"
-
-  rm "${_thisdir}/msys2-base-x86_64-${_date}.tar"
 }
 
 copy_installer() {
@@ -69,7 +47,7 @@ create_installer() {
       -p "${_ifwroot}/packages" \
       -c "${_ifwroot}/config/config.xml" \
       --offline-only \
-      "${_thisdir}/msys2-x86_64-${_date}.exe" \
+      "${_thisdir}/msys2-x86_64.exe" \
       -v
   popd > /dev/null
 }
@@ -89,14 +67,14 @@ create_tmp_system() {
     printf "\n[artiq]\nSigLevel = Optional TrustAll\nServer = https://msys2.m-labs.hk/artiq-beta\n" >> ${OLDROOT}/etc/pacman.conf
     ${PACMAN} -Syy --root "${_newmsys}" ${OLDCONFIG}
     ${PACMAN} -S ${MINGW_PACKAGE_PREFIX}-artiq --noconfirm --root "${_newmsys}" ${OLDCONFIG}
-    ${PACMAN} -Q --root "${_newmsys}" ${OLDCONFIG} > "${_thisdir}/msys2-base-x86_64-${_date}.packages.txt"
+    ${PACMAN} -Sp --root "${_newmsys}" ${OLDCONFIG} > "${_thisdir}/msys2-base-x86_64.packages.txt"
   popd > /dev/null
 }
 
 main() {
   mkdir -p $OLDROOT/var/lib/pacman $OLDROOT/msys/etc
 
-  curl -L https://mirror.msys2.org/msys/x86_64/pacman-mirrors-20220205-1-any.pkg.tar.zst | tar xvf - -C $OLDROOT --zstd
+  curl -L https://repo.msys2.org/msys/x86_64/pacman-mirrors-20240210-1-any.pkg.tar.zst | tar xvf - -C $OLDROOT --zstd
   curl -L https://raw.githubusercontent.com/msys2/MSYS2-packages/master/pacman/pacman.conf | sed -e "s|/etc/pacman.d|$OLDROOT/etc/pacman.d|g" -e "s|SigLevel    = Required|SigLevel    = Never|g" > $OLDROOT/etc/pacman.conf
 
   ${PACMAN} --root $OLDROOT --config $OLDROOT/etc/pacman.conf -Syy
