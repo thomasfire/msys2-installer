@@ -67,7 +67,7 @@ create_tmp_system() {
     printf "\n[artiq]\nSigLevel = Optional TrustAll\nServer = https://msys2.m-labs.hk/artiq-beta\n" >> ${OLDROOT}/etc/pacman.conf
     ${PACMAN} -Syy --root "${_newmsys}" ${OLDCONFIG}
     ${PACMAN} -S ${MINGW_PACKAGE_PREFIX}-artiq --noconfirm --root "${_newmsys}" ${OLDCONFIG}
-    ${PACMAN} -Sp --root "${_newmsys}" ${OLDCONFIG} > "${_thisdir}/msys2-base-x86_64.packages.txt"
+    ${PACMAN} -Q --root "${_newmsys}" ${OLDCONFIG} > "${_thisdir}/msys2-base-x86_64.packages.txt"
   popd > /dev/null
 }
 
