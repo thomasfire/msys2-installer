@@ -13,10 +13,7 @@ printf "\n[artiq]\nSigLevel = Optional TrustAll\nServer = https://msys2.m-labs.h
 
 fakeroot pacman --root $MSYS2DIR --config $MSYS2DIR/etc/pacman.conf -Syy
 pacman --root $MSYS2DIR --config $MSYS2DIR/etc/pacman.conf --cachedir $MSYS2DIR/msys/cache \
-  --sync --print-format "%l %n" mingw-w64-x86_64-artiq > $MSYS2DIR/packages.txt
-
-pacman --root $MSYS2DIR --config $MSYS2DIR/etc/pacman.conf --cachedir $MSYS2DIR/msys/cache \
-  --sync --print-format "%l %n" filesystem msys2-runtime base > $MSYS2DIR/packages_base.txt
+  --sync --print-format "%l %n" mingw-w64-x86_64-artiq mingw-w64-x86_64-openocd mingw-w64-x86_64-bscan-spi-bitstreams > $MSYS2DIR/packages.txt
 
 pacman --root $MSYS2DIR --config $MSYS2DIR/etc/pacman.conf --cachedir $MSYS2DIR/msys/cache \
   --sync --print-format "%l %n" mingw-w64-x86_64-qt-installer-framework > $MSYS2DIR/qt_ifw_packages.txt
@@ -38,4 +35,3 @@ function generate_nix_packages() {
 
 IN=$MSYS2DIR/packages.txt OUT=msys2_packages.nix generate_nix_packages
 IN=$MSYS2DIR/qt_ifw_packages.txt OUT=msys2_qt_ifw_packages.nix generate_nix_packages
-IN=$MSYS2DIR/packages_base.txt OUT=msys2_base_packages.nix generate_nix_packages

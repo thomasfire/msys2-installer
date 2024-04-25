@@ -12,7 +12,6 @@
       msys2-image = pkgs.stdenvNoCC.mkDerivation rec {
           name = "msys2-image";
           srcs = import ./msys2_packages.nix { inherit pkgs; };
-          base_srcs = import ./msys2_base_packages.nix { inherit pkgs; };
           mirrors = pkgs.fetchurl {
               url = "https://mirror.msys2.org/msys/x86_64/pacman-mirrors-20240210-1-any.pkg.tar.zst";
               name = "pacman-mirrors";
@@ -32,10 +31,9 @@
              mkdir $out
              mkdir -p tmp/cache
              tar -xvf ${base} --strip-components=1 -C $out/ msys64
+             printf "\n[artiq]\nSigLevel = Optional TrustAll\nServer = https://msys2.m-labs.hk/artiq-beta\n" >> $out/etc/pacman.conf
              cat $src/pacman.conf | sed -e "s|/etc/pacman.d|$out/etc/pacman.d|g" -e "s|SigLevel    = Required|SigLevel    = Never|g" > tmp/pacman.conf
-             fakeroot pacman -Udd --noconfirm  --cachedir tmp/cache --config  tmp/pacman.conf --root $out ${pkgs.lib.concatStringsSep " " (map (p: "${p}") base_srcs)}
              fakeroot pacman -Udd --noconfirm  --cachedir tmp/cache --config  tmp/pacman.conf --root $out ${pkgs.lib.concatStringsSep " " (map (p: "${p}") srcs)}
-             printf \"\n[artiq]\nSigLevel = Optional TrustAll\nServer = https://msys2.m-labs.hk/artiq-beta\n\" >> $out/etc/pacman.conf
          '';
       };
       msys2-qt-ifw = pkgs.stdenvNoCC.mkDerivation rec {

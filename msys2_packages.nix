@@ -563,4 +563,58 @@
       name = "mingw-w64-x86_64-artiq";
       sha256 = "148kga82qqd8ill6ckf7clb8v6bm78p4jcil952fqw62s1482ald";
     })
+
+    (pkgs.fetchurl {
+      url = "https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-hidapi-0.14.0-2-any.pkg.tar.zst";
+      name = "mingw-w64-x86_64-hidapi";
+      sha256 = "05k8papxsnnvz26761gjfpc7h3db89j7kdg9jyfyd9g5nmpy18x5";
+    })
+
+    (pkgs.fetchurl {
+      url = "https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-libusb-1.0.27-1-any.pkg.tar.zst";
+      name = "mingw-w64-x86_64-libusb";
+      sha256 = "1jjdj6njc3yapki1ffj7q5hcy6sd3gqrwyf830bgg72kmc8lxpwl";
+    })
+
+    (pkgs.fetchurl {
+      url = "https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-libusb-compat-git-r76.b5db9d0-2-any.pkg.tar.zst";
+      name = "mingw-w64-x86_64-libusb-compat-git";
+      sha256 = "0x9gczdy09mjrj3cybl0qyk77466lhpcjv23r5z1851yq70ilhz9";
+    })
+
+    (pkgs.fetchurl {
+      url = "https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-confuse-3.3-3-any.pkg.tar.zst";
+      name = "mingw-w64-x86_64-confuse";
+      sha256 = "0cv020y67984jax23v3iwi9kcn753qafhqsida44y6jhd1znjjpm";
+    })
+
+    (pkgs.fetchurl {
+      url = "https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-libftdi-1.5-7-any.pkg.tar.zst";
+      name = "mingw-w64-x86_64-libftdi";
+      sha256 = "0pcrwic5wgdjhs5vvynz8fw2hiqbaz75kikl61gmzqxshm619b2v";
+    })
+
+    (pkgs.fetchurl {
+      url = "https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-libjaylink-git-r175.cfccbc9-2-any.pkg.tar.zst";
+      name = "mingw-w64-x86_64-libjaylink-git";
+      sha256 = "053vp2jak9qrl3di5syr6bw7z1hspx5744027knb6irm3kpa1iki";
+    })
+
+    (pkgs.fetchurl {
+      url = "https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-capstone-5.0.1-1-any.pkg.tar.zst";
+      name = "mingw-w64-x86_64-capstone";
+      sha256 = "0h079b5rm2r3jq6v2bq6mvhvkplngw1pv3h16dff483hnpwc3dpz";
+    })
+
+    (pkgs.fetchurl {
+      url = "https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-openocd-0.12.0-2-any.pkg.tar.zst";
+      name = "mingw-w64-x86_64-openocd";
+      sha256 = "1na5blv3kajiic8f1igyanbmva6rj8flxam5xmg9d23v8yr99z6a";
+    })
+
+    (pkgs.fetchurl {
+      url = "https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-bscan-spi-bitstreams-1.0-1-any.pkg.tar.zst";
+      name = "mingw-w64-x86_64-bscan-spi-bitstreams";
+      sha256 = "0facp60r9364fkrxx6vfrbivr00yiq99n6n24f5snqb8vqc2mrd1";
+    })
 ]
