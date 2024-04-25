@@ -18,47 +18,25 @@
               name = "pacman-mirrors";
               sha256 = "0sjj38fkiaixv2vkmivb0l9isv3fbvpq44ml0wyc7jq59k75pp2s";
             };
+          base = pkgs.fetchurl {
+            url = "https://github.com/msys2/msys2-installer/releases/download/2024-01-13/msys2-base-x86_64-20240113.tar.xz";
+            name = "base";
+            sha256 = "sha256-BEVqRKlW08C1+bbHVJGL86jD2HyFi+egyUyRcasTxYw=";
+          };
 
-          ca_certs = pkgs.fetchurl {
-                url = "https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-ca-certificates-20240203-1-any.pkg.tar.zst";
-                name = "mingw-w64-x86_64-ca-certificates";
-                sha256 = "092wq5mainz3insakm9lacqa348p3ya6xnf2c3s65x7c6hw0702v";
-              };
           src = ./.;
           buildInputs = [ pkgs.gnutar pkgs.zstd pkgs.pacman pkgs.fakeroot ];
           phases = [ "installPhase" ];
 
           installPhase = ''
-            ls -al $src
-            mkdir -p $out/tmp
-            mkdir -p $out/tmp/etc $out/tmp/var/lib/pacman $out/tmp/msys/etc
-
-            cp $src/pacman.conf .
-            #cp pacman.conf tmp/etc/pacman.conf
-            ls -al .
-            ls -al $out/tmp/etc/
-            tar xvf ${mirrors} -C $out/tmp
-            tar xvf ${ca_certs} -C $out/tmp
-            ${pkgs.lib.strings.concatStringsSep "\n" (map (p: "tar xvf ${p} -C $out/tmp") base_srcs)}
-            ${pkgs.lib.strings.concatStringsSep "\n" (map (p: "tar xvf ${p} -C $out/tmp") srcs)}
-            tar xvf ${ca_certs} -C $out/tmp
-            cat pacman.conf | sed -e "s|/etc/pacman.d|$out/tmp/etc/pacman.d|g" -e "s|SigLevel    = Required|SigLevel    = Never|g" > $out/tmp/etc/pacman.conf
-            #fakeroot pacman --root $out/tmp --config $out/tmp/etc/pacman.conf -Syy
-
-              mkdir -p $out/var/lib/pacman $out/msys/etc
-              tar xvf ${mirrors} -C $out
-              cp $src/pacman.conf $out/etc/pacman.conf
-              #fakeroot pacman --root $out --config $out/tmp/etc/pacman.conf -Syy
-              ls -al /
-              #ln -s /proc/mounts /etc/mtab
-              ls -al /etc
-              ls -al /proc
-
-
-              #fakeroot pacman -U --noconfirm  --cachedir $out/tmp/msys/cache --config  $out/tmp/etc/pacman.conf --root $out ${pkgs.lib.concatStringsSep " " (map (p: "${p}") base_srcs)}
-              #fakeroot pacman -U --noconfirm  --cachedir $out/tmp/msys/cache --config  $out/tmp/etc/pacman.conf --root $out ${pkgs.lib.concatStringsSep " " (map (p: "${p}") srcs)}
-              rm -rf $out/tmp
-          '';
+             mkdir $out
+             mkdir -p tmp/cache
+             tar -xvf ${base} --strip-components=1 -C $out/ msys64
+             cat $src/pacman.conf | sed -e "s|/etc/pacman.d|$out/etc/pacman.d|g" -e "s|SigLevel    = Required|SigLevel    = Never|g" > tmp/pacman.conf
+             fakeroot pacman -Udd --noconfirm  --cachedir tmp/cache --config  tmp/pacman.conf --root $out ${pkgs.lib.concatStringsSep " " (map (p: "${p}") base_srcs)}
+             fakeroot pacman -Udd --noconfirm  --cachedir tmp/cache --config  tmp/pacman.conf --root $out ${pkgs.lib.concatStringsSep " " (map (p: "${p}") srcs)}
+             printf \"\n[artiq]\nSigLevel = Optional TrustAll\nServer = https://msys2.m-labs.hk/artiq-beta\n\" >> $out/etc/pacman.conf
+         '';
       };
       msys2-qt-ifw = pkgs.stdenvNoCC.mkDerivation rec {
         name = "msys2-qt-ifw";
@@ -93,6 +71,7 @@
         installPhase = ''
           mkdir -p $out
           cp msys2-x86_64.exe $out/
+          mkdir -p $out/nix-support/
           for i in $out/*.*; do
             echo file binary-dist $i >> $out/nix-support/hydra-build-products
           done
