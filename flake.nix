@@ -11,13 +11,8 @@
       };
       msys2-image = pkgs.stdenvNoCC.mkDerivation rec {
           name = "msys2-image";
-          srcs = import ./msys2_packages.nix { inherit pkgs; };
-          mirrors = pkgs.fetchurl {
-              url = "https://mirror.msys2.org/msys/x86_64/pacman-mirrors-20240210-1-any.pkg.tar.zst";
-              name = "pacman-mirrors";
-              sha256 = "0sjj38fkiaixv2vkmivb0l9isv3fbvpq44ml0wyc7jq59k75pp2s";
-            };
-          base = pkgs.fetchurl {
+          artiq-pkgs = import ./msys2_artiq_packages.nix { inherit pkgs; };
+          msys2-base = pkgs.fetchurl {
             url = "https://github.com/msys2/msys2-installer/releases/download/2024-01-13/msys2-base-x86_64-20240113.tar.xz";
             name = "base";
             sha256 = "sha256-BEVqRKlW08C1+bbHVJGL86jD2HyFi+egyUyRcasTxYw=";
@@ -30,10 +25,10 @@
           installPhase = ''
              mkdir $out
              mkdir -p tmp/cache
-             tar -xvf ${base} --strip-components=1 -C $out/ msys64
+             tar -xvf ${msys2-base} --strip-components=1 -C $out/ msys64
              printf "\n[artiq]\nSigLevel = Optional TrustAll\nServer = https://msys2.m-labs.hk/artiq-beta\n" >> $out/etc/pacman.conf
              cat $src/pacman.conf | sed -e "s|/etc/pacman.d|$out/etc/pacman.d|g" -e "s|SigLevel    = Required|SigLevel    = Never|g" > tmp/pacman.conf
-             fakeroot pacman -Udd --noconfirm  --cachedir tmp/cache --config  tmp/pacman.conf --root $out ${pkgs.lib.concatStringsSep " " (map (p: "${p}") srcs)}
+             fakeroot pacman -Udd --noconfirm  --cachedir tmp/cache --config  tmp/pacman.conf --root $out ${pkgs.lib.concatStringsSep " " (map (p: "${p}") artiq-pkgs)}
          '';
       };
       msys2-qt-ifw = pkgs.stdenvNoCC.mkDerivation rec {
@@ -53,7 +48,7 @@
            export HOME=`mktemp -d`
            cp $src/make-msys2-installer make-msys2-installer
            cp -r $src/qt-ifw qt-ifw
-           chmod -R 777 qt-ifw
+           chmod -R 700 qt-ifw
            find qt-ifw \( -name "package.xml" -or -name "config.xml" \) -exec sed -i "s|@DATE@|$(date +'%Y-%m-%d')|g" "{}" \;
            find qt-ifw \( -name "package.xml" -or -name "config.xml" \) -exec sed -i "s|@VERSION@|$(date +'%Y%m%d')|g" "{}" \;
 

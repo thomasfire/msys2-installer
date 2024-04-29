@@ -33,5 +33,5 @@ function generate_nix_packages() {
     echo "]" >> $OUT
 }
 
-IN=$MSYS2DIR/packages.txt OUT=msys2_packages.nix generate_nix_packages
+IN=$MSYS2DIR/packages.txt OUT=msys2_artiq_packages.nix generate_nix_packages
 IN=$MSYS2DIR/qt_ifw_packages.txt OUT=msys2_qt_ifw_packages.nix generate_nix_packages
